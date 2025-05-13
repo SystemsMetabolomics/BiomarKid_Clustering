@@ -1,10 +1,3 @@
-library(readxl)
-library(dplyr)
-library(corrplot)
-library(Hmisc)
-library(openxlsx)
-library(lsr)
-
 ## introduction for corrplot https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html
 my_corrplot <- function(matrix){
   corrplot(matrix,
