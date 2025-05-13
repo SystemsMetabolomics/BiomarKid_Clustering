@@ -37,7 +37,7 @@ called with source() in the according main scripts. All scripts can only be
 run on a specific dataset and do not function as a pipeline for data of 
 different structures, since specific phenotypes etc. are selected. 
 
-method_exploration can not be run as a whole, but is rather a file were
+method_exploration can not be run as a whole, but is rather a file where
 different parameters and algorithms must be tested separately. This does not 
 create any data needed for the main scripts, but helps chosing the parameters
 for the clustering by visually expecting the outcomes of these exploratory 
