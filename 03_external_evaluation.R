@@ -5,7 +5,7 @@ source("utils_plotting.R")
 # CHOOSE SETTINGS
 # ==================================
 k_range <- 2:16
-k = 13 # chosen k for final clustering
+k = 13 # chosen k for final clustering (necessary for alluvial)
 # ==================================
 # 
 # ==================================
