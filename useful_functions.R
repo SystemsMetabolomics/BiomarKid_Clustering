@@ -30,4 +30,3 @@ rmv_tp <- function(data_col){
 #$ -> "T24" am Ende des Strings steht.bestätigt dass Ausdruck am Ende steht
 
 
-
