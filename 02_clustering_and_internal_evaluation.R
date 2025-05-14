@@ -135,7 +135,7 @@ for (seed in seeds) {
     results <- kmeans(
       data_scaled,
       centers = i,
-      nstart = 150, # verschiedene nstarts manual getestet, siehe plots in output/plots
+      nstart = 150, # verschiedene nstarts manual getestet, siehe supplementary files
       iter.max = 20
     ) 
     cluster_km[, paste0("k_", i)] <- results$cluster
@@ -222,7 +222,7 @@ saveRDS(evaluation_gmm_results$EEI,"output/evaluation_gmm_results.RDS")
 saveRDS(cluster_gmm_liste$EEI, "output/cluster_gmm_list.RDS")
 
 # ==================================
-# SOM (self organizing map) https://www.r-bloggers.com/2021/04/self-organizing-maps-in-r-supervised-vs-unsupervised/
+# SOM (self organizing map)
 # ==================================
 grid <- somgrid(xdim = 12, ydim = 12, topo = "hex") # xdim und ydim größe des gitters, topo= sechseckig oder rechteckig ("rect")
 
@@ -246,8 +246,7 @@ for (data in names(pca_list)) {
     pca_list[[data]],
     grid = grid,
     rlen = 300,
-    alpha = c(0.01, 0.005),
-    # = lernrate (start und endwerte)
+    alpha = c(0.01, 0.005), # = lernrate (start und endwerte)
     radius = 10
   )
   
