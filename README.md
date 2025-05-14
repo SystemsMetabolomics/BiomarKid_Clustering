@@ -1,5 +1,7 @@
 This Bachelor Thesis consists of different scripts. For running this code,
 a dummy dataset is included since the real dataset is not publicly distributable.
+The dummy set is just random data that follows the structure of the original
+data but not data this code was written for. 
 
 Please run 00.init.R first.
 This will load all packages required and create the directories needed to save
@@ -10,13 +12,13 @@ tables and plots during the analyses. This will create the following structure:
 │   └─ processed/                         # Directory is created by 00_init.R   
 ├─ 00_init.R               
 ├─ 01_data_preparation.R
-├─ 02_outlier_detection.R 
-├─ 03_clustering_and_internal_evaluation.R
-├─ 04_external_evaluation.R
-├─ 05_phenotype_association.R
-├─ 06_metabolite_relevance.R
+├─ 02_clustering_and_internal_evaluation.R
+├─ 03_external_evaluation.R
+├─ 04_phenotype_association.R
+├─ 05_metabolite_relevance.R
 ├─ useful_functions.R
 ├─ utils_data_preparation.R
+├─ utils_outlier_detection.R 
 ├─ utils_phenotype_selection.R
 ├─ utils_T132_phenotype_selection.R
 ├─ utils_phenotype_association.R
@@ -47,27 +49,26 @@ methods.
 scaling, outlier detection, phenotype selection, adjust data for country)
 Metablite input has to be a table of metabolites (columns) and samples (rows) 
 or phenotypes (columns) and samples (rows) for phenotype association.
-IF DUMMYSET IS USED - no outliers are found with default settings, please use
-outlier_detection -> FALSE and dummy_set <- TRUE for this data.
+Use dummy_set <- TRUE for dummy set and leave outlier detection on true ->
+if not - paths to files need to changed in other scripts.
 
-03_clustering_and_internal_evaluation.R -> here clustering is done on selected
+02_clustering_and_internal_evaluation.R -> here clustering is done on selected
 parameters. This results in cluster assignment result tables for k = 2:16
 and plots are created for each k and evaluation metric. bootstrapping can be
 turned to TRUE (but takes a while to fully run)
 This file script automatically reads in file created from 01.
 
-04_external_evaluation.R -> creates evaluation plot for all methods to compare.
+03_external_evaluation.R -> creates evaluation plot for all methods to compare.
 creates ARI plot and alliuvial plots for visuall inspection.
 
-05_phenotype_association.R -> timepoint for which phenotype association should be 
+04_phenotype_association.R -> timepoint for which phenotype association should be 
 done has to be chosen here (T66 or T132). Also select k_values association should
 be done on (between 2:16) for association tables and a k (must be in 
 k_values) to create plots for.
-PLOTS DONT WORK FOR DUMMY DATASET because there are not enough significant clusters.
 
-For SGI analysis: 05 SGI -> TRUE 
+For SGI analysis: 05 SGI -> TRUE (only works for T66)
 
-06_metabolite_relevance.R -> creates heatmaply.html, a circle mean heatmap and 
+05_metabolite_relevance.R -> creates heatmaply.html, a circle mean heatmap and 
 ranks metabolites that drive clusters most (top10 and bottom10). Choose k here. 
 
 
