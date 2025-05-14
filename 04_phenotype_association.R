@@ -22,7 +22,7 @@ k_values <- c(7, 13)
 ## select final K (or k plots should be done with -> needs to be part of k_values
 k <- 13
 
-# should SGI toolbox be run and create plots as pdf?
+# should SGI toolbox be run and create plots as pdf - only for T66
 run_SGI <- TRUE
 # ==================================
 #
@@ -79,9 +79,9 @@ save_test_results(list_tests)
 
 
 # ==================================
-# PLOTS DONT WORK FOR DUMMY DATA BECAUSE THERE ARE TOO MANY METHODS WITH NO SIGNIFICANCE
+# PLOTS FOR FINAL CHOSEN K (or K one wants to look at - must be part of k_values)
 # ==================================
-### PLOTS FOR FINAL CHOSEN K (or K one wants to look at - must be part of k_values)
+
 if (k %in% k_values){
   # one vs all plots for only looked at cluster vs rest
   boxplot_one_vs_all_hc <- boxplots_sig_one_vs_all(outcomes_cluster_hc, outcomes_log, one_vs_all_tests_hc, "hc", k, timepoint= timepoint, TRUE)
@@ -101,16 +101,11 @@ if (k %in% k_values){
   message("Plots cannot be created because t-tests were not executed (k is not part of k_range).")
 }
 
-
 # ==================================
-# SGI
+# SGI for T66
 # ==================================
-if (run_SGI){
-  if (timepoint == "T66"){
+if (run_SGI && timepoint == "T66"){
    selected_phenotypes <- outcomes_T66
-  } else if (timepoint == "T132"){
-    selected_phenotypes <- outcomes_T132
-  }
   
   data_scaled_no_timepoint <- rownames_as_column(data_scaled)
   data_scaled_no_timepoint$Sample <- rmv_tp(data_scaled_no_timepoint$Sample)
@@ -178,7 +173,7 @@ if (run_SGI){
     }
   }
   
-  # combines plots (and safe pdf)
+  # combines plots (and save pdf)
   pdf("output/plots/sgi_plots_combined_selected_phenotypes_wardD2.pdf", width = 8, height = 6)
   combined_plots
   dev.off()
