@@ -1,31 +1,41 @@
 source("00_init.R")
-source("02_outlier_detection.R")
+source("utils_outlier_detection.R")
 source("useful_functions.R")
 source("utils_plotting.R")
 source("utils_phenotype_selection.R")
 source("utils_data_preparation.R")
 
-## should outliers be detected and removed?
-dummy_set <- FALSE
 
-run_outlier_detection <- FALSE ## no outlier for dummy data
+# ==================================
+# CHOOSE SETTINGS
+# ==================================
+dummy_set <- TRUE
+run_outlier_detection <- TRUE # leave this on, otherwise file names in other scripts need to be changed to raw data
 save_exploratory_plots <- FALSE
+# ==================================
+# 
+# ==================================
+
 
 # ==================================
 # Read in Data 
 # ==================================
-raw_data <- readRDS("dummy_data.rds") 
-all_phenotypes <- readRDS("dummy_phenotypes_T66.rds")
-phenotypes_T132 <- readRDS("dummy_phenotypes_T132.rds")
-
-## for real dataset (excel sheets)
-#raw_data <- as.data.frame(read_excel("CHOP_T66_Denise_winsorized.xlsx")) 
-#all_phenotypes <- as.data.frame(read_excel("CHOP_T66_Denise_winsorized.xlsx", sheet = "Phenotype Data"))
-#phenotypes_T132 <- as.data.frame(read_excel("CHOP_T132_Denise_winsorized.xlsx", sheet = "Phenotype Data"))
-
+if (dummy_set){
+  raw_data <- readRDS("dummy_data.rds") 
+  all_phenotypes <- readRDS("dummy_phenotypes_T66.rds")
+  phenotypes_T132 <- readRDS("dummy_phenotypes_T132.rds")
+} else {
+  raw_data <- as.data.frame(read_excel("/Users/denise/Desktop/CHOP_T66_Denise_winsorized.xlsx")) 
+  all_phenotypes <- as.data.frame(read_excel("/Users/denise/Desktop/CHOP_T66_Denise_winsorized.xlsx", sheet = "Phenotype Data"))
+  phenotypes_T132 <- as.data.frame(read_excel("/Users/denise/Desktop/CHOP_T132_Denise_winsorized.xlsx", sheet = "Phenotype Data"))
+}
 
 if(run_outlier_detection){
-  data_no_outlier <- outlier_detection(raw_data, all_phenotypes, save_outlier_plot = TRUE, create_exp_plots = TRUE)
+  if (dummy_set){
+    data_no_outlier <- outlier_detection(raw_data, all_phenotypes, 0.9, save_outlier_plot = TRUE, create_exp_plots = TRUE) ## different threshold than default because default doesnt find outliers in dummy set
+  } else {
+    data_no_outlier <- outlier_detection(raw_data, all_phenotypes, save_outlier_plot = TRUE, create_exp_plots = TRUE)
+  }
   data <- data_no_outlier[[1]]
   all_phenotypes <- data_no_outlier[[2]]
   rm(data_no_outlier)
@@ -65,15 +75,6 @@ if (run_outlier_detection){
   saveRDS(clean_data, file = "data/processed/metabolites_clean_no_outliers.rds")
   saveRDS(phenotypes_T132, file = "data/raw/phenotypes_T132.rds")
 } else {
-  if(dummy_set){
-    saveRDS(data, "data/raw/metabolites_no_outliers.rds")
-    saveRDS(all_phenotypes,"data/raw/phenotypes_no_outliers.rds")
-    saveRDS(phenotypes_T132, file = "data/raw/phenotypes_T132.rds")
-    
-    ### save preprocessed RDS data for clustering
-    saveRDS(selected_phenotypes, "data/processed/selected_phenotypes_no_outliers.rds")
-    saveRDS(clean_data, file = "data/processed/metabolites_clean_no_outliers.rds")
-  } else {
     ## raw data
     saveRDS(data, "data/raw/all_metabolites_raw.rds")
     saveRDS(all_phenotypes, "data/raw/all_phenotypes_untouched.rds")
@@ -82,7 +83,7 @@ if (run_outlier_detection){
     ### save preprocessed RDS data for clustering
     saveRDS(selected_phenotypes, "data/processed/selected_phenotypes.rds")
     saveRDS(clean_data, file = "data/processed/metabolites_clean.rds")
-  }
+    saveRDS(phenotypes_T132, file = "data/raw/phenotypes_T132.rds")
 }
 
 # ==================================
