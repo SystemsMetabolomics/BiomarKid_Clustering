@@ -16,7 +16,7 @@ outlier_mahalanobis <- function(pca_scores, p_cutoff) {
 
 outlier_detection <- function (data,
                                phenotypes,
-                               chi_cutoff = 0.9999,
+                               chi_cutoff = 0.9999, 
                                save_outlier_plot = TRUE,
                                create_exp_plots = FALSE) {
   
