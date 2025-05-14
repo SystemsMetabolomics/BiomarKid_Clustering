@@ -261,4 +261,3 @@ plot_cluster_circos <- function(cluster_means, row_order, breaks = c(-3,0,3)){
   )
   circos.clear()
 }
-
