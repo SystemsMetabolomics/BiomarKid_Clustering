@@ -246,10 +246,11 @@ cluster_test <- function(data, data_cluster, k_values, compare_type = c("pairwis
   return(all_results)
 }
 
-#### save t-test results as excel sheets
+#### save t-test results as excel sheets (only if significants have been found)
 save_test_results <- function(list_tests){
   for (method in names(list_tests)){
     save_results <- list_tests[[method]]
+    if(length(save_results) > 0){
     wb <- createWorkbook()
     # each dataframe its own sheet
     for (i in seq_along(save_results)) {
@@ -258,9 +259,9 @@ save_test_results <- function(list_tests){
     }
     file_name <- paste0("output/", method, "_", timepoint, ".xlsx")
     saveWorkbook(wb, file_name, overwrite = TRUE)
+    }
   }
 }
-
 
 # ==================================
 # PLOTS
@@ -326,11 +327,17 @@ add_significant_lines <- function(significant_pairs, plot, y_max = NULL){
 }
 
 boxplots_sig_one_vs_all <- function(outcome_cluster, phenotypes, one_vs_all, clustering_method, k, timepoint, save_plots = FALSE){
-  phenotypes_num <- select_if(phenotypes, is.numeric)
+  if (as.character(k) %in% names(one_vs_all)){
   k_cluster_str <- paste0("k_", k)
   
   one_vs_all_data <- one_vs_all[[as.character(k)]]
-  num_sig <- one_vs_all_data[is.na(one_vs_all_data$test),]
+  
+  # if significants are also in country etc. there is a column named "test", this is excluded since these plots are boxplots for numerical values
+  if ("test" %in% names(one_vs_all_data)){
+    num_sig <- one_vs_all_data[is.na(one_vs_all_data$test),]
+  } else {
+    num_sig <- one_vs_all_data
+  }
   
   if (save_plots){pdf(paste0("output/plots/boxplots_one_vs_all_", clustering_method, "_", k, "_", timepoint, ".pdf"))}
   
@@ -368,6 +375,9 @@ boxplots_sig_one_vs_all <- function(outcome_cluster, phenotypes, one_vs_all, clu
   if (save_plots) {
     dev.off()
   }
+  } else {
+    message("Chosen k does not have any significant clusters. Plots were not created.")
+  }
 }
 
 # boxplots for numerical phenotypes
@@ -379,22 +389,32 @@ boxplots_sig <- function(outcome_cluster, phenotypes, clustering_method, k, time
   for (pheno in colnames(phenotypes_num)) {
     outcome_cluster_na <- outcome_cluster[!is.na(outcome_cluster[, pheno]), ]
     
+    # get one_vs_all data
     one_vs_all_tests <- paste0("one_vs_all_tests_", clustering_method)
     pairwise_tests <- paste0("pairwise_tests_", clustering_method)
     
     one_vs_all_tests_data <- get(one_vs_all_tests)
     pairwise_tests_data <- get(pairwise_tests)
     
-    significant_cluster <- one_vs_all_tests_data[[as.character(k)]] %>%
-      filter(phenotype == pheno)
+    # check if there is even significants for chosen k
+    if (!is.null(one_vs_all_tests_data[[as.character(k)]])) {
+      significant_cluster <- one_vs_all_tests_data[[as.character(k)]] %>%
+        filter(phenotype == pheno)
+    } else {
+      significant_cluster <- tibble()  
+    }
     
     significant_cluster_ids <- if (nrow(significant_cluster) > 0) {
       significant_cluster$cluster_A
     }
     
-    significant_pairs <- pairwise_tests_data[[as.character(k)]] %>%
-      filter(phenotype == pheno)
-    
+    if (!is.null(pairwise_tests_data[[as.character(k)]])) {
+      significant_pairs <- pairwise_tests_data[[as.character(k)]] %>%
+        filter(phenotype == pheno)
+    } else {
+      significant_pairs <- tibble()  ### leer wenn es keine signifikanten pairwise gibt
+    }
+
     plot <- ggplot(outcome_cluster_na, aes_string(x = paste0("factor(", k_cluster_str, ")"), y = pheno)) +
       geom_boxplot(aes_string(fill = paste0("factor(", k_cluster_str, " %in% significant_cluster_ids)")), width = 0.5, alpha = 0.4) +
       scale_fill_manual(values = c("TRUE" = "darkgreen", "FALSE" = "transparent"), guide = "none") +
@@ -427,9 +447,12 @@ distributionplots_sig <- function(outcome_cluster, phenotypes, clustering_method
     one_vs_all_tests_data <- get(one_vs_all_tests)
     pairwise_tests_data <- get(pairwise_tests)
     
-    
-    significant_cluster <- one_vs_all_tests_data[[as.character(k)]] %>%
-      filter(phenotype == pheno_name)
+    if (!is.null(one_vs_all_tests_data[[as.character(k)]])) {
+      significant_cluster <- one_vs_all_tests_data[[as.character(k)]] %>%
+        filter(phenotype == pheno_name)
+    } else {
+      significant_cluster <- tibble()  
+    }
     
     significant_cluster_ids <- if (nrow(significant_cluster) > 0) {
       significant_cluster$cluster_A
@@ -446,8 +469,12 @@ distributionplots_sig <- function(outcome_cluster, phenotypes, clustering_method
       ) +
       theme_bw()
     
-    significant_pairs <- pairwise_tests_data[[as.character(k)]] %>%
-      filter(phenotype == pheno_name)
+    if (!is.null(pairwise_tests_data[[as.character(k)]])) {
+      significant_pairs <- pairwise_tests_data[[as.character(k)]] %>%
+        filter(phenotype == pheno_name)
+    } else {
+      significant_pairs <- tibble()  ### leer wenn es keine signifikanten pairwise gibt
+    }
     
     if (nrow(significant_pairs) > 0 && sig_lines) {
       add_significant_lines(significant_pairs, plot, max_y)
