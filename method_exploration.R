@@ -120,7 +120,7 @@ fit$BIC
 
 
 # ==================================
-# SOM (self organizing map) https://www.r-bloggers.com/2021/04/self-organizing-maps-in-r-supervised-vs-unsupervised/
+# SOM (self organizing map)
 # ==================================
 data_matrix <- as.matrix(data_scaled)
 
