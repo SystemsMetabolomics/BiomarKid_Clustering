@@ -14,7 +14,7 @@ data_scaled <- readRDS("data/processed/metabolites_clean_no_outliers.rds")
 # CHOOSE SETTINGS
 # ==================================
 ##choose timepoint of phenotypes for phenotype associationoca
-timepoint = "T132" #(T66 or T132)
+timepoint = "T66" #(T66 or T132)
 
 ## select k_values phenotype associations should be done on (later different sheets in excel file)
 k_values <- c(7, 13)
